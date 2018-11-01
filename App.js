@@ -2,6 +2,8 @@
 const express = require('express');
 // 解析一个中间件请求体在你处理的req.body
 const bodyParser = require('body-parser');
+const multer = require('multer');
+const upload = multer();
 // 创建一个新的中间件函数来服务于给定根目录下的文件
 const serveStatic = require('serve-static');
 
@@ -63,6 +65,7 @@ app.use(bodyParser.urlencoded({
 }));
 // 将返回的数据json化
 app.use(bodyParser.json({limit: '20mb'}));
+
 app.use(cookieParser());
 app.use(session({
     secret: 'ireader',
@@ -73,6 +76,9 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+
+// for parsing multipart/form-data
+app.use(upload.array()); 
 
 // 路由相关 ////////////////////////////////
 // 引入路由

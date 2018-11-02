@@ -44,6 +44,15 @@ const port = process.env.PORT || 3001;
 // 启动一个web服务 将示例赋给一个变量
 const app = express();
 
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Credentials','true');
+    next();
+};
+app.use(allowCrossDomain);
+
 // 数据库相关 ////////////////////////////////
 // 引入mongoose 连接数据库
 const mongoose = require('mongoose');
@@ -78,24 +87,6 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// for parsing multipart/form-data
-// app.use(upload.array()); 
-// handle file with busboy
-// app.use(busboy());
-// app.use(function(req, res) {
-//     if (req.busboy) {
-//     console.log('req.busboy', req.busboy)
-
-//       req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-//         console.log('fieldname', fieldname)
-//       });
-//       req.busboy.on('field', function(key, value, keyTruncated, valueTruncated) {
-//         console.log('value', value)
-//       });
-//       req.pipe(req.busboy);
-//     }
-//   });
-
 // 路由相关 ////////////////////////////////
 // 引入路由
 const routes = require('./config/router.js');
@@ -105,6 +96,8 @@ app.use(function(err, req, res, next) {
     console.error(err.stack);
     res.status(500).send('Something broke!');
 });
+
+
 
 // 开发时查看问题 //////////////////////////////
 const morgan = require('morgan');

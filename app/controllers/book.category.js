@@ -8,8 +8,11 @@ let path = require('path');
 // - 书 - 分类 - 保存
 exports.update = function (req, res) {
     console.log('book category req : ', req.body);
-    console.log('book category req files : ', req.files);
-    console.log('book category req file : ', req.file);
+    // console.log('book category req file : ', req.file);
+    // console.log('book category req files : ', req.files);
+    // console.log('book category background : ', req.background);
+    // console.log('book category icon : ', req.icon);
+    // console.log('book category req : ', req.yes);
 
 
     // console.log('save req', req.poster);

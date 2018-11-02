@@ -7,7 +7,11 @@ let path = require('path');
 
 // - 书 - 分类 - 保存
 exports.update = function (req, res) {
-    console.log('book category req : ', req);
+    console.log('book category req : ', req.body);
+    console.log('book category req files : ', req.files);
+    console.log('book category req file : ', req.file);
+
+
     // console.log('save req', req.poster);
 
     // let id = req.body.category._id;

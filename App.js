@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const upload = multer();
+const busboy = require('connect-busboy');
 // 创建一个新的中间件函数来服务于给定根目录下的文件
 const serveStatic = require('serve-static');
 
@@ -78,7 +79,22 @@ app.use(session({
 }));
 
 // for parsing multipart/form-data
-app.use(upload.array()); 
+// app.use(upload.array()); 
+// handle file with busboy
+// app.use(busboy());
+// app.use(function(req, res) {
+//     if (req.busboy) {
+//     console.log('req.busboy', req.busboy)
+
+//       req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+//         console.log('fieldname', fieldname)
+//       });
+//       req.busboy.on('field', function(key, value, keyTruncated, valueTruncated) {
+//         console.log('value', value)
+//       });
+//       req.pipe(req.busboy);
+//     }
+//   });
 
 // 路由相关 ////////////////////////////////
 // 引入路由

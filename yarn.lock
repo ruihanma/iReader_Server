@@ -203,7 +203,7 @@ buffer-shims@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/buffer-shims/-/buffer-shims-1.0.0.tgz#9978ce317388c649ad8793028c3477ef044a8b51"
 
-busboy@^0.2.11:
+busboy@*, busboy@^0.2.11, busboy@^0.2.14:
   version "0.2.14"
   resolved "https://registry.yarnpkg.com/busboy/-/busboy-0.2.14.tgz#6c2a622efcf47c57bbbe1e2a9c37ad36c7925453"
   dependencies:
@@ -306,6 +306,12 @@ concat-stream@^1.5.2:
     inherits "^2.0.3"
     readable-stream "^2.2.2"
     typedarray "^0.0.6"
+
+connect-busboy@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/connect-busboy/-/connect-busboy-0.0.2.tgz#ac5c9c96672171885e576c66b2bfd95d3bb11097"
+  dependencies:
+    busboy "*"
 
 connect-mongo@^2.0.1:
   version "2.0.1"
@@ -487,6 +493,14 @@ eventemitter3@^3.0.0:
 expand-template@^1.0.2:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/expand-template/-/expand-template-1.1.1.tgz#981f188c0c3a87d2e28f559bc541426ff94f21dd"
+
+express-fileupload@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/express-fileupload/-/express-fileupload-1.0.0.tgz#3e295cffe1e76258e46fd63c3bc17307ba0aeac0"
+  dependencies:
+    busboy "^0.2.14"
+    md5 "^2.2.1"
+    streamifier "^0.1.1"
 
 express-session@^1.15.6:
   version "1.15.6"
@@ -872,7 +886,7 @@ long@~3:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/long/-/long-3.2.0.tgz#d821b7138ca1cb581c172990ef14db200b5c474b"
 
-md5@^2.0.0:
+md5@^2.0.0, md5@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/md5/-/md5-2.2.1.tgz#53ab38d5fe3c8891ba465329ea23fac0540126f9"
   dependencies:
@@ -1488,6 +1502,10 @@ sshpk@^1.7.0:
 statuses@~1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.4.0.tgz#bb73d446da2796106efcc1b601a253d6c46bd087"
+
+streamifier@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/streamifier/-/streamifier-0.1.1.tgz#97e98d8fa4d105d62a2691d1dc07e820db8dfc4f"
 
 streamsearch@0.1.2:
   version "0.1.2"

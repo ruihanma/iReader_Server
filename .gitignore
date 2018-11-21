@@ -68,5 +68,5 @@ jsconfig.json
 .vscode
 
 # static source
-public/upload
+public/uploads
 

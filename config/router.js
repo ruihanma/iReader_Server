@@ -8,10 +8,10 @@ const express = require("express");
 const router = express.Router();
 
 // 插件multer
-const { FileUpload } = require("../app/utils");
+const {FileUpload} = require("../app/utils");
 
 // 中间件
-const { FileSave } = require('../app/utils')
+const {FileSave} = require('../app/utils');
 
 const BookCategory = require("../app/controllers/book.category");
 
@@ -21,8 +21,8 @@ router.get("/api/book/category/list", BookCategory.list);
 router.post(
   "/api/book/category/update",
   FileUpload.fields([
-    { name: "icon", maxCount: 1 },
-    { name: "background", maxCount: 1 }
+    {name: "icon", maxCount: 1},
+    {name: "background", maxCount: 1}
   ]),
   FileSave,
   BookCategory.update

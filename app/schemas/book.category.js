@@ -7,7 +7,12 @@ const CategorySchema = new Schema({
         type: String,
         unique: true
     },
+    title_en: {
+        type: String,
+        unique: true
+    },
     intro: String,
+    intro_en: String,
     sort: {
         type: Number,
         default: 100

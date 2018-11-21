@@ -17,70 +17,67 @@ exports.update = function (req, res) {
 
     // console.log('save req', req.poster);
 
-    // let id = req.body.category._id;
-    // let _category_tmp = req.body.category;
-    // let _category;
+    let id = req.body.id;
+    let _category_tmp = req.body;
+    let _category;
 
-    // if (req.poster) {
-    //     _category_tmp.cover = req.poster
-    // }
+    if (req.body.background) {
+        _category_tmp.background = req.body.background
+    }
+    if(req.body.icon) {
+        _category_tmp.icon = req.body.icon
+    }
 
-    // if(req.icon) {
-    //     _category_tmp.icon = req.icon
+    if (id) {
+        Category.findById(id, function (err, category) {
+            if (err) {
+                console.log(err);
+                return res.send({
+                    status: 500,
+                    message: 'Category Update Failed',
+                    content: err
+                });
+            }
 
-    // }
+            _category = _.extend(category, _category_tmp);
+            _category.save(function (err, category) {
+                if (err) {
+                    console.log(err);
+                    return res.send({
+                        status: 500,
+                        message: 'Category Update Failed',
+                        content: err
+                    });
+                }
 
-    // if (id) {
-    //     Category.findById(id, function (err, category) {
-    //         if (err) {
-    //             console.log(err);
-    //             return res.send({
-    //                 status: 500,
-    //                 message: 'Category Update Failed',
-    //                 content: err
-    //             });
-    //         }
+                return res.send({
+                    status: 200,
+                    message: category.title + ' Update Success',
+                    content: category
+                });
+            })
+        })
+    }
+    else {
+        let category = new Category(_category_tmp);
 
-    //         _category = _.extend(category, _category_tmp);
-    //         _category.save(function (err, category) {
-    //             if (err) {
-    //                 console.log(err);
-    //                 return res.send({
-    //                     status: 500,
-    //                     message: 'Category Update Failed',
-    //                     content: err
-    //                 });
-    //             }
+        category.save(function (err, category) {
+            if (err) {
+                console.log(err);
 
-    //             return res.send({
-    //                 status: 200,
-    //                 message: category.name + ' Update Success',
-    //                 content: category
-    //             });
-    //         })
-    //     })
-    // }
-    // else {
-    //     let category = new Category(_category_tmp);
-
-    //     category.save(function (err, category) {
-    //         if (err) {
-    //             console.log(err);
-
-    //             return res.send({
-    //                 status: 500,
-    //                 message: 'Category Saved Failed',
-    //                 content: err
-    //             });
-    //         }
-    //         console.log('serve category', category);
-    //         return res.send({
-    //             status: 200,
-    //             message: category.name + ' Saved Success',
-    //             content: category
-    //         });
-    //     })
-    // }
+                return res.send({
+                    status: 500,
+                    message: 'Category Saved Failed',
+                    content: err
+                });
+            }
+            return res.send({
+                status: 200,
+                message: category.title + ' Saved Success',
+                content: category
+            });
+        })
+    }
 };
 
 // - 书 - 分类 - 列表

@@ -50,7 +50,7 @@ function checkUploadPath(uploadPath) {
 exports.FileSave = function (req, res, next) {
   //   console.log('req', req);
   if (req.files && _.isObject(req.files)) {
-    console.log('req.files', req.files);
+    // console.log('req.files', req.files);
     const files = Object.values(req.files);
     if (files.length) {
       // 处理 多个文件 同时上传

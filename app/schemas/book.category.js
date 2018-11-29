@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
-const CategorySchema = new Schema({
+const BookCategorySchema = new Schema({
     title: {
         type: String,
         unique: true
@@ -37,7 +37,7 @@ const CategorySchema = new Schema({
 });
 
 // const ObjectId = mongoose.Schema.Types.ObjectId
-CategorySchema.pre('save', function(next) {
+BookCategorySchema.pre('save', function(next) {
     if (this.isNew) {
         this.meta.createAt = this.meta.updateAt = Date.now()
     }
@@ -48,7 +48,7 @@ CategorySchema.pre('save', function(next) {
     next()
 });
 
-CategorySchema.statics = {
+BookCategorySchema.statics = {
     fetch: function(cb) {
         return this
             .find({})
@@ -62,4 +62,4 @@ CategorySchema.statics = {
     }
 };
 
-module.exports = CategorySchema;
+module.exports = BookCategorySchema;

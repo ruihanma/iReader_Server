@@ -1,7 +1,8 @@
 const path = require("path");
 const _ = require("lodash");
 const fs = require("fs");
-const write = require("fs-writefile-promise");
+const mkdirp = require("mkdirp");
+const writefile = require("fs-writefile-promise");
 // 配置信息
 const {
   FILE_UPLOAD_URL_BASE,
@@ -34,17 +35,28 @@ exports.FileUpload = multer({storage: storage});
 // 文件保存处理 ///////////////////////////////////////
 // - 检查路径是否存在 不存在就创建
 function checkUploadPath(uploadPath) {
-  fs.exists(uploadPath, function (exists) {
-    if (!exists) {
-      fs.mkdir(uploadPath, function (err) {
-        if (err) {
-          console.log("Error in folder creation");
-          next();
-        }
-      });
-    }
-  });
+  return new Promise((resolve, reject) => {
+    fs.exists(uploadPath, function (exists) {
+      if (!exists) {
+        mkdirp(uploadPath, function (err) {
+          if (err) {
+            console.log("Error in folder creation");
+            reject(false)
+          }
+          else {
+            resolve(true)
+          }
+        });
+      }
+      else{
+        resolve(true)
+
+      }
+    });
+  })
+
 }
+
 
 // - 主方法
 exports.FileSave = function (req, res, next) {
@@ -66,45 +78,52 @@ exports.FileSave = function (req, res, next) {
             const PATH_FULL = FILE_UPLOAD_URL_BASE + PATH;
             // 相对路径
             const PATH_REL = FILE_UPLOAD_URL_BASE_REL + PATH;
-            // 判断路径是否存在 不存在就创建
-            checkUploadPath(PATH_FULL);
-            //   console.log("PATH", PATH);
             // 生成文件后缀
             const FORMAT = "." + item.mimetype.split("/")[1];
-            //   console.log('FORMAT', FORMAT);
+            // console.log('FORMAT', FORMAT);
             // 生成文件名称 替换/为_
             const NAME = PATH.replace(/\//gi, "_") + "_" + Date.now();
-            //   console.log('NAME', NAME);
-            //   console.log('FILE_UPLOAD_URL_BASE', FILE_UPLOAD_URL_BASE);
-            // 利用buffer存储进path
-            // fs.writeFile(PATH_FULL + NAME + FORMAT, item.buffer, function(err) {
-            //   console.log("err", err);
-            //   req.body[item.fieldname] = PATH_FULL + NAME + FORMAT;
-            //   next()
-            // });
-            write(PATH_FULL + NAME + FORMAT, item.buffer)
-              .then(filename => {
-                console.log(filename); //=> '/tmp/foo'
-                req.body[item.fieldname] = PATH_REL + NAME + FORMAT;
-              })
-              .then(() => {
-                if (i === files.length - 1 && ii === file.length - 1) {
-                  // console.log("i", i);
-                  // console.log("ii", ii);
-                  console.log("files 遍历完成");
-                  next();
-                }
-              })
-              .catch(function (err) {
-                console.error(err);
-              });
+
+            // 判断路径是否存在 不存在就创建
+            checkUploadPath(PATH_FULL).then(res=>{
+              console.log('res', res);
+              if(res){
+                writefile(PATH_FULL + NAME + FORMAT, item.buffer).then(filename => {
+                    console.log(filename); //=> '/tmp/foo'
+                    req.body[item.fieldname] = PATH_REL + NAME + FORMAT;
+                  })
+                  .then(() => {
+                    if (i === files.length - 1 && ii === file.length - 1) {
+                      // console.log("i", i);
+                      // console.log("ii", ii);
+                      console.log("files 遍历完成");
+                      next();
+                    }
+                  })
+                  .catch(function (err) {
+                    console.error(err);
+                    return res.send({
+                      status: 500,
+                      message: err,
+                    });
+                  });
+              }
+              else{
+                return res.send({
+                  status: 500,
+                  message: 'Create Image Fail',
+                });
+              }
+            })
+
+
           } else {
             console.log("没有字段：", item.fieldname + "Path");
           }
         });
       });
     }
-    else{
+    else {
       next();
     }
 

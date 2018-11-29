@@ -14,6 +14,22 @@ const {FileUpload} = require("../app/utils");
 const {FileSave} = require('../app/utils');
 
 const BookCategory = require("../app/controllers/book.category");
+const BookAuthor = require("../app/controllers/book.author");
+
+
+// 书 - 作者 - 列表
+router.get("/api/book/author/list", BookAuthor.list);
+// 书 - 作者 - 保存
+router.post(
+  "/api/book/author/update",
+  FileUpload.fields([
+    {name: "avatar", maxCount: 1}
+  ]),
+  FileSave,
+  BookAuthor.update
+);
+// 书 - 作者 - 删除
+router.delete("/api/book/author/del", BookAuthor.del);
 
 // 书 - 分类 - 列表
 router.get("/api/book/category/list", BookCategory.list);

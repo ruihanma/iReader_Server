@@ -27,7 +27,7 @@ const BookAuthorSchema = new Schema({
     default: false
   },
   avatar: String,
-  book: [{type: ObjectId, ref: 'Book'}],
+  books: [{type: ObjectId, ref: 'Book'}],
   meta: {
     createAt: {
       type: Date,

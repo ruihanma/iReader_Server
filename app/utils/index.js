@@ -29,37 +29,32 @@ const multer = require("multer");
 const storage = multer.memoryStorage();
 
 // 文件上传中间件
-exports.FileUpload = multer({storage: storage});
+exports.FileUpload = multer({ storage: storage });
 // 文件上传处理 End ///////////////////////////////////////
 
 // 文件保存处理 ///////////////////////////////////////
 // - 检查路径是否存在 不存在就创建
 function checkUploadPath(uploadPath) {
   return new Promise((resolve, reject) => {
-    fs.exists(uploadPath, function (exists) {
+    fs.exists(uploadPath, function(exists) {
       if (!exists) {
-        mkdirp(uploadPath, function (err) {
+        mkdirp(uploadPath, function(err) {
           if (err) {
             console.log("Error in folder creation");
-            reject(false)
-          }
-          else {
-            resolve(true)
+            reject(false);
+          } else {
+            resolve(true);
           }
         });
-      }
-      else{
-        resolve(true)
-
+      } else {
+        resolve(true);
       }
     });
-  })
-
+  });
 }
 
-
 // - 主方法
-exports.FileSave = function (req, res, next) {
+exports.FileSave = function(req, res, next) {
   //   console.log('req', req);
   if (req.files && _.isObject(req.files)) {
     // console.log('req.files', req.files);
@@ -70,6 +65,7 @@ exports.FileSave = function (req, res, next) {
       _.each(files, (file, i) => {
         _.each(file, (item, ii) => {
           // console.log("item", item);
+          // console.log("req.body", req.body);
           // 利用 fieldname 从body中获取 path
           if (_.has(req.body, item.fieldname + "Path")) {
             // 存放路径
@@ -81,14 +77,22 @@ exports.FileSave = function (req, res, next) {
             // 生成文件后缀
             const FORMAT = "." + item.mimetype.split("/")[1];
             // console.log('FORMAT', FORMAT);
+
+            // 为对象生成名字
             // 生成文件名称 替换/为_
-            const NAME = PATH.replace(/\//gi, "_") + "_" + Date.now();
+            // 判断是否有_id(是否是第一次创建)
+            let NAME = PATH.replace(/\//gi, "_") + "_" + Date.now();
+            if (req.body.id) {
+              // 有id
+              NAME = req.body.id.toUpperCase() + "-" + item.fieldname.toUpperCase();
+            }
 
             // 判断路径是否存在 不存在就创建
-            checkUploadPath(PATH_FULL).then(res=>{
-              console.log('res', res);
-              if(res){
-                writefile(PATH_FULL + NAME + FORMAT, item.buffer).then(filename => {
+            checkUploadPath(PATH_FULL).then(res => {
+              console.log("res", res);
+              if (res) {
+                writefile(PATH_FULL + NAME + FORMAT, item.buffer)
+                  .then(filename => {
                     console.log(filename); //=> '/tmp/foo'
                     req.body[item.fieldname] = PATH_REL + NAME + FORMAT;
                   })
@@ -100,33 +104,28 @@ exports.FileSave = function (req, res, next) {
                       next();
                     }
                   })
-                  .catch(function (err) {
+                  .catch(function(err) {
                     console.error(err);
                     return res.send({
                       status: 500,
-                      message: err,
+                      message: err
                     });
                   });
-              }
-              else{
+              } else {
                 return res.send({
                   status: 500,
-                  message: 'Create Image Fail',
+                  message: "Create Image Fail"
                 });
               }
-            })
-
-
+            });
           } else {
             console.log("没有字段：", item.fieldname + "Path");
           }
         });
       });
-    }
-    else {
+    } else {
       next();
     }
-
   } else if (req.file && req.file.length) {
     // 处理 单个文件 上传
     next();

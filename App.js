@@ -114,4 +114,4 @@ if ('development' === app.get('env')) {
 
 // 监听端口号
 app.listen(port);
-console.log('Ama Server start on port ' + port);
+console.log('iReader Server start on port ' + port);

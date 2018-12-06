@@ -5,11 +5,9 @@ const ObjectId = Schema.Types.ObjectId;
 const BookSchema = new Schema({
   title: {
     type: String,
-    unique: true
   },
   title_en: {
     type: String,
-    unique: true
   },
   intro: String,
   intro_en: String,
@@ -25,9 +23,14 @@ const BookSchema = new Schema({
     type: Boolean,
     default: false
   },
+  // 地区 对应国家
+  origins: Array,
+  // 语言
+  language: String,
   thumbnail: String,
-  chapters: [{type: ObjectId, ref: 'Chapter'}],
-  author: [{type: ObjectId, ref: 'Author'}],
+  chapters: [{type: ObjectId, ref: 'BookChapter'}],
+  categories: [{type: ObjectId, ref: 'BookCategory'}],
+  authors: [{type: ObjectId, ref: 'BookAuthor'}],
   meta: {
     createAt: {
       type: Date,

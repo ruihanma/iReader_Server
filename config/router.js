@@ -15,7 +15,21 @@ const {FileSave} = require('../app/utils');
 
 const BookCategory = require("../app/controllers/book.category");
 const BookAuthor = require("../app/controllers/book.author");
+const Book = require("../app/controllers/book");
 
+// 书 - 作者 - 列表
+router.get("/api/book/list", Book.list);
+// 书 - 作者 - 保存
+router.post(
+  "/api/book/update",
+  FileUpload.fields([
+    {name: "thumbnail", maxCount: 1}
+  ]),
+  FileSave,
+  Book.update
+);
+// 书 - 作者 - 删除
+router.delete("/api/book/del", Book.del);
 
 // 书 - 作者 - 列表
 router.get("/api/book/author/list", BookAuthor.list);

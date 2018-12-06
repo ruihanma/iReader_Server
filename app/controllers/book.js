@@ -1,5 +1,5 @@
 let mongoose = require('mongoose');
-let Author = mongoose.model('BookAuthor');
+let Book = mongoose.model('Book');
 
 let _ = require('underscore');
 let fs = require('fs');
@@ -7,74 +7,71 @@ let path = require('path');
 
 // - 书 - 分类 - 保存
 exports.update = function (req, res) {
-    console.log('book author req : ', req.body);
-    // console.log('book author req file : ', req.file);
-    // console.log('book author req files : ', req.files);
-    // console.log('book author background : ', req.background);
-    // console.log('book author icon : ', req.icon);
-    // console.log('book author req : ', req.yes);
+    console.log('book req : ', req.body);
+    // console.log('book book req file : ', req.file);
+    // console.log('book book req files : ', req.files);
+    // console.log('book book background : ', req.background);
+    // console.log('book book icon : ', req.icon);
+    // console.log('book book req : ', req.yes);
 
 
     // console.log('save req', req.poster);
 
     let id = req.body.id;
-    let _author_tmp = req.body;
-    let _author;
+    let _book_tmp = req.body;
+    let _book;
 
-    if (req.body.background) {
-        _author_tmp.background = req.body.background
-    }
-    if(req.body.avatar) {
-        _author_tmp.avatar = req.body.avatar
+    if(req.body.thumbnail) {
+        _book_tmp.thumbnail = req.body.thumbnail
     }
 
     if (id) {
-        Author.findById(id, function (err, author) {
+        Book.findById(id, function (err, book) {
             if (err) {
                 console.log(err);
                 return res.send({
                     status: 500,
-                    message: 'Author Update Failed',
+                    message: 'Book Update Failed',
                     content: err
                 });
             }
 
-            _author = _.extend(author, _author_tmp);
-            _author.save(function (err, author) {
+            _book = _.extend(book, _book_tmp);
+            _book.save(function (err, book) {
                 if (err) {
                     console.log(err);
                     return res.send({
                         status: 500,
-                        message: 'Author Update Failed',
+                        message: 'Book Update Failed',
                         content: err
                     });
                 }
 
                 return res.send({
                     status: 200,
-                    message: author.name + ' Update Success',
-                    content: author
+                    message: book.title + ' Update Success',
+                    content: book
                 });
             })
         })
     }
     else {
-        let author = new Author(_author_tmp);
+        let book = new Book(_book_tmp);
 
-        author.save(function (err, author) {
+        book.save(function (err, book) {
             if (err) {
                 console.log(err);
 
                 return res.send({
                     status: 500,
-                    message: 'Author Saved Failed',
+                    message: 'Book Saved Failed',
                     content: err
                 });
             }
             return res.send({
                 status: 200,
-                message: author.name + ' Saved Success',
-                content: author
+                message: book.title + ' Saved Success',
+                content: book
             });
         })
     }
@@ -82,20 +79,20 @@ exports.update = function (req, res) {
 
 // - 书 - 分类 - 列表
 exports.list = function (req, res) {
-    Author.fetch(function (err, content) {
+    Book.fetch(function (err, content) {
         if (err) {
             console.log(err);
 
             return res.send({
                 status: 500,
-                message: 'Authors Fetched Failed',
+                message: 'Books Fetched Failed',
                 content: err
             });
         }
 
         return res.send({
             status: 200,
-            message: 'Authors Fetched Success',
+            message: 'Books Fetched Success',
             content
         });
     })
@@ -106,7 +103,7 @@ exports.del = function (req, res) {
 
     var id = req.query.id;
     if (id) {
-        Author.remove({_id: id}, function (err, author) {
+        Book.remove({_id: id}, function (err, book) {
             if (err) {
                 console.log(err);
                 return res.send({

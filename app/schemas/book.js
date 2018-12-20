@@ -42,9 +42,13 @@ const BookSchema = new Schema({
     }
   }
 });
-
 // const ObjectId = mongoose.Schema.Types.ObjectId
 BookSchema.pre('save', function (next) {
+  //
+  if(this.isModified("categories")){
+    console.log("save this.categories", this.categories);
+  }
+
   if (this.isNew) {
     this.meta.createAt = this.meta.updateAt = Date.now()
   }

@@ -11,6 +11,8 @@ const serveStatic = require('serve-static');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
+const mongodb = require('mongodb');
+const { ReplSet } = require("mongodb-topology-manager");
 
 // 本地数据读取
 const fs = require('fs');
@@ -55,14 +57,16 @@ app.use(allowCrossDomain);
 
 // 数据库相关 ////////////////////////////////
 // 引入mongoose 连接数据库
+
 const mongoose = require('mongoose');
 const dbUrl = 'mongodb://localhost:27017/ireader';
 mongoose.connect(dbUrl);
 mongoose.Promise = require('bluebird');
 
+
 // 视图相关 ////////////////////////////////
 // 设置视图的根目录
-app.set('views', './app/views');
+app.set('views', './app/views')
 // 设置默认的模版引擎
 app.set('view engine', 'ejs');
 // 获取静态资源
@@ -91,11 +95,6 @@ app.use(session({
 // 引入路由
 const routes = require('./config/router.js');
 app.use('/', routes);
-// 错误处理
-app.use(function(err, req, res, next) {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-});
 
 
 
@@ -104,13 +103,36 @@ const morgan = require('morgan');
 const logger = morgan('dev');
 app.locals.moment = require('moment');
 
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
+
 // 区分环境
 if ('development' === app.get('env')) {
     app.set('showStackError', true);
     app.use(logger);
     app.locals.pretty = true;
     mongoose.set('debug', true);
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
 }
+
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
+});
 
 // 监听端口号
 app.listen(port);

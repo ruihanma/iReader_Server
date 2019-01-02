@@ -63,6 +63,8 @@ BookSchema.statics = {
   fetch: function (cb) {
     return this
       .find({})
+      // .populate("authors")
+      // .populate("categories")
       .sort('meta.updateAt')
       .exec(cb)
   },

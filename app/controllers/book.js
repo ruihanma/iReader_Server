@@ -12,11 +12,6 @@ let path = require("path");
 // - 书 - 分类 - 保存
 exports.update = async function(req, res) {
   console.log("book req : ", req.body);
-  // console.log('book book req file : ', req.file);
-  // console.log('book book req files : ', req.files);
-  // console.log('book book background : ', req.background);
-  // console.log('book book icon : ', req.icon);
-  // console.log('book book req : ', req.yes);
 
   // console.log('save req', req.poster);
 

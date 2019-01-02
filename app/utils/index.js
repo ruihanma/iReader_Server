@@ -29,16 +29,16 @@ const multer = require("multer");
 const storage = multer.memoryStorage();
 
 // 文件上传中间件
-exports.FileUpload = multer({ storage: storage });
+exports.FileUpload = multer({storage: storage});
 // 文件上传处理 End ///////////////////////////////////////
 
 // 文件保存处理 ///////////////////////////////////////
 // - 检查路径是否存在 不存在就创建
 function checkUploadPath(uploadPath) {
   return new Promise((resolve, reject) => {
-    fs.exists(uploadPath, function(exists) {
+    fs.exists(uploadPath, function (exists) {
       if (!exists) {
-        mkdirp(uploadPath, function(err) {
+        mkdirp(uploadPath, function (err) {
           if (err) {
             console.log("Error in folder creation");
             reject(false);
@@ -54,7 +54,7 @@ function checkUploadPath(uploadPath) {
 }
 
 // - 主方法
-exports.FileSave = function(req, res, next) {
+exports.FileSave = async function (req, res, next) {
   //   console.log('req', req);
   if (req.files && _.isObject(req.files)) {
     // console.log('req.files', req.files);
@@ -88,36 +88,37 @@ exports.FileSave = function(req, res, next) {
             }
 
             // 判断路径是否存在 不存在就创建
-            checkUploadPath(PATH_FULL).then(res => {
-              console.log("res", res);
-              if (res) {
-                writefile(PATH_FULL + NAME + FORMAT, item.buffer)
-                  .then(filename => {
-                    console.log(filename); //=> '/tmp/foo'
-                    req.body[item.fieldname] = PATH_REL + NAME + FORMAT;
-                  })
-                  .then(() => {
-                    if (i === files.length - 1 && ii === file.length - 1) {
-                      // console.log("i", i);
-                      // console.log("ii", ii);
-                      console.log("files 遍历完成");
-                      next();
-                    }
-                  })
-                  .catch(function(err) {
-                    console.error(err);
-                    return res.send({
-                      status: 500,
-                      message: err
+            checkUploadPath(PATH_FULL)
+              .then(res => {
+                console.log("res", res);
+                if (res) {
+                  writefile(PATH_FULL + NAME + FORMAT, item.buffer)
+                    .then(filename => {
+                      console.log(filename); //=> '/tmp/foo'
+                      req.body[item.fieldname] = PATH_REL + NAME + FORMAT;
+                    })
+                    .then(() => {
+                      if (i === files.length - 1 && ii === file.length - 1) {
+                        // console.log("i", i);
+                        // console.log("ii", ii);
+                        console.log("files 遍历完成");
+                        next();
+                      }
+                    })
+                    .catch(function (err) {
+                      console.error(err);
+                      return res.send({
+                        status: 500,
+                        message: err
+                      });
                     });
+                } else {
+                  return res.send({
+                    status: 500,
+                    message: "Create Image Fail"
                   });
-              } else {
-                return res.send({
-                  status: 500,
-                  message: "Create Image Fail"
-                });
-              }
-            });
+                }
+              });
           } else {
             console.log("没有字段：", item.fieldname + "Path");
           }
@@ -139,19 +140,19 @@ module.exports.ArrDiff = function (a1, a2) {
   var a = [], diff = [];
 
   for (var i = 0; i < a1.length; i++) {
-      a[a1[i]] = true;
+    a[a1[i]] = true;
   }
 
   for (var i = 0; i < a2.length; i++) {
-      if (a[a2[i]]) {
-          delete a[a2[i]];
-      } else {
-          a[a2[i]] = true;
-      }
+    if (a[a2[i]]) {
+      delete a[a2[i]];
+    } else {
+      a[a2[i]] = true;
+    }
   }
 
   for (var k in a) {
-      diff.push(k);
+    diff.push(k);
   }
 
   return diff;

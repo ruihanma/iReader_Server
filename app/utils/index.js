@@ -60,10 +60,13 @@ exports.FileSave = async function (req, res, next) {
     // console.log('req.files', req.files);
     const files = Object.values(req.files);
     if (files.length) {
-      // 处理 多个文件 同时上传
-      console.log("处理 多个文件 同时上传");
+      // 处理 多个文件 同时上传 一个字段就是一个数组
+      console.log("处理 多个字段 同时上传", files);
       _.each(files, (file, i) => {
+        console.log("当前字段："+file[0].fieldname+"的数组", file);
+
         _.each(file, (item, ii) => {
+          console.log("："+item.fieldname+"的数组", item);
           // console.log("item", item);
           // console.log("req.body", req.body);
           // 利用 fieldname 从body中获取 path

@@ -11,29 +11,26 @@ const serveStatic = require('serve-static');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
-const mongodb = require('mongodb');
-const { ReplSet } = require("mongodb-topology-manager");
 
 // 本地数据读取
 const fs = require('fs');
 // 预先跑通所有的modal
 const models_path = __dirname + '/app/models';
-let walk = function(path) {
-    fs
-        .readdirSync(path)
-        .forEach(function(file) {
-            var newPath = path + '/' + file;
-            var stat = fs.statSync(newPath);
+let walk = function (path) {
+  fs
+    .readdirSync(path)
+    .forEach(function (file) {
+      var newPath = path + '/' + file;
+      var stat = fs.statSync(newPath);
 
-            if (stat.isFile()) {
-                if (/(.*)\.(js|coffee)/.test(file)) {
-                    require(newPath)
-                }
-            }
-            else if (stat.isDirectory()) {
-                walk(newPath)
-            }
-        })
+      if (stat.isFile()) {
+        if (/(.*)\.(js|coffee)/.test(file)) {
+          require(newPath)
+        }
+      } else if (stat.isDirectory()) {
+        walk(newPath)
+      }
+    })
 };
 walk(models_path);
 
@@ -46,12 +43,12 @@ const port = process.env.PORT || 3001;
 // 启动一个web服务 将示例赋给一个变量
 const app = express();
 
-var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    res.header('Access-Control-Allow-Credentials','true');
-    next();
+var allowCrossDomain = function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
 };
 app.use(allowCrossDomain);
 
@@ -75,20 +72,20 @@ app.use(serveStatic('public'));
 // 数据相关 ////////////////////////////////
 // 将表单内的数据进行格式化
 app.use(bodyParser.urlencoded({
-    extended: true
+  extended: true
 }));
 // 将返回的数据json化
 app.use(bodyParser.json({limit: '20mb'}));
 
 app.use(cookieParser());
 app.use(session({
-    secret: 'ireader',
-    store: new MongoStore({
-        url: dbUrl,
-        collection: 'sessions'
-    }),
-    resave: false,
-    saveUninitialized: true
+  secret: 'ireader',
+  store: new MongoStore({
+    url: dbUrl,
+    collection: 'sessions'
+  }),
+  resave: false,
+  saveUninitialized: true
 }));
 
 // 路由相关 ////////////////////////////////
@@ -97,41 +94,40 @@ const routes = require('./config/router.js');
 app.use('/', routes);
 
 
-
 // 开发时查看问题 //////////////////////////////
 const morgan = require('morgan');
 const logger = morgan('dev');
 app.locals.moment = require('moment');
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
+app.use(function (req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
 // 区分环境
 if ('development' === app.get('env')) {
-    app.set('showStackError', true);
-    app.use(logger);
-    app.locals.pretty = true;
-    mongoose.set('debug', true);
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
+  app.set('showStackError', true);
+  app.use(logger);
+  app.locals.pretty = true;
+  mongoose.set('debug', true);
+  app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err
     });
+  });
 }
 
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
+app.use(function (err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
 });
 
 // 监听端口号
